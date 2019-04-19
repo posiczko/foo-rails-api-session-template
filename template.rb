@@ -55,6 +55,7 @@ def add_gems
     gem "byebug", platforms: %i[mri mingw x64_mingw]
     gem "factory_bot_rails"
     gem "ffaker"
+    gem "email_spec"
     gem "rubocop", require: false
     gem "rubocop-rspec"
   end
@@ -70,6 +71,11 @@ def add_gems
   end
 end
 
+def add_rspec
+  puts "Configuring RSpec"
+  copy_file ".rspec"
+  directory "spec", force: :true
+end
 
 def add_sidekiq
   # TODO: Add add_sidekiq
@@ -79,6 +85,10 @@ end
 def add_users
   # TODO: Add add_users
 puts "TBD:: Adding users."
+end
+
+def add_whenever
+
 end
 
 def check_rails_version
@@ -108,12 +118,6 @@ def prettify_gemfile
   puts "TBD: Prettify Gemfile."
 end
 
-def set_application_name
-  environment "config.application_name = Rails.application.class.parent_name"
-  puts "You can change application name inside: ./config/application.rb"
-end
-
-
 #
 # Main
 #
@@ -123,7 +127,6 @@ add_gems
 prettify_gemfile
 
 after_bundle do
-  set_application_name
   add_rspec
   add_critics
   add_sidekiq
@@ -132,7 +135,6 @@ after_bundle do
   # Migrate
   rails_command "db:create"
   rails_command "db:migrate"
-
 
   # Commit everything to git
   git :init
