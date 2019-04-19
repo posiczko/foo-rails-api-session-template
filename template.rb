@@ -28,8 +28,9 @@ def add_template_repository_to_source_path
 end
 
 def add_critics
-  # TODO: Add add_critics
-  puts "TBD:: add_critics"
+  say "Adding critics"
+  directory "lib", force: :true
+  copy_file ".rubocop"
 end
 
 def add_gems
@@ -43,13 +44,14 @@ def add_gems
   gem "whenever", require: false
   
   gem_group :development do
+    gem "term-ansicolor"
     gem "flog"
     gem "flay"
     gem "guard-bundler"
     gem "guard-rspec", require: false
     # gem "guard-spring"
+    gem "rails_best_practices"
     gem "reek"
-    gem "standard"
   end
   
   gem_group :development, :test do
