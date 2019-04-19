@@ -97,7 +97,8 @@ end
 
 def add_whenever
   # TODO: Add whenever
-  say "TBD:: Adding whenever."
+  say "Adding whenever."
+  run "wheneverize ."
 end
 
 def check_rails_version
