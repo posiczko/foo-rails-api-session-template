@@ -115,6 +115,11 @@ def check_rails_version
   exit 1
 end
 
+def prettify_gemfile
+  # TODO: Add prettify_gemfile
+  say "TBD: Prettify Gemfile."
+end
+
 def rails_version
   @rails_version ||= Gem::Version.new(Rails::VERSION::STRING)
 end
@@ -123,9 +128,8 @@ def rails_6?
   Gem::Requirement.new(">= 6.0.0.beta1", "< 7").satisfied_by? rails_version
 end
 
-def prettify_gemfile
-  # TODO: Add prettify_gemfile
-  say "TBD: Prettify Gemfile."
+def stop_spring
+  run "spring stop"
 end
 
 #
@@ -134,6 +138,7 @@ end
 check_rails_version
 add_template_repository_to_source_path
 add_gems
+stop_spring
 prettify_gemfile
 
 after_bundle do
