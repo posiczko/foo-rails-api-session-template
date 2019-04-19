@@ -1,6 +1,6 @@
 require "fileutils"
 
-PROJECT_NAME= "rails-api-session".freeze
+PROJECT_NAME = "rails-api-session".freeze
 PROJECT_REPO = "https://github.com/posiczko/#{PROJECT_NAME}.git".freeze
 
 # Copied from: https://github.com/mattbrictson/rails-template
@@ -14,10 +14,10 @@ def add_template_repository_to_source_path
     source_paths.unshift(tempdir = Dir.mktmpdir("jumpstart-"))
     at_exit {FileUtils.remove_entry(tempdir)}
     git clone: [
-                   "--quiet",
-                   PROJECT_REPO,
-                   tempdir
-               ].map(&:shellescape).join(" ")
+      "--quiet",
+      PROJECT_REPO,
+      tempdir
+    ].map(&:shellescape).join(" ")
     
     if (branch = __FILE__[%r{jumpstart/(.+)/template.rb}, 1])
       Dir.chdir(tempdir) {git checkout: branch}
@@ -47,6 +47,7 @@ def add_gems
     gem "flay"
     gem "guard-bundler"
     gem "guard-rspec", require: false
+    # gem "guard-spring"
     gem "reek"
     gem "standard"
   end
@@ -71,24 +72,30 @@ def add_gems
   end
 end
 
+def add_guard
+  say "Adding Guard"
+  copy_file "Guardfile"
+end
+
 def add_rspec
-  puts "Configuring RSpec"
+  say "Configuring RSpec"
   copy_file ".rspec"
   directory "spec", force: :true
 end
 
 def add_sidekiq
   # TODO: Add add_sidekiq
-  puts "TBD:: add_sidekiq"
+  say "TBD:: add_sidekiq"
 end
 
 def add_users
   # TODO: Add add_users
-puts "TBD:: Adding users."
+  say "TBD:: Adding users."
 end
 
 def add_whenever
-
+  # TODO: Add whenever
+  say "TBD:: Adding whenever."
 end
 
 def check_rails_version
@@ -115,7 +122,7 @@ end
 
 def prettify_gemfile
   # TODO: Add prettify_gemfile
-  puts "TBD: Prettify Gemfile."
+  say "TBD: Prettify Gemfile."
 end
 
 #
@@ -128,19 +135,20 @@ prettify_gemfile
 
 after_bundle do
   add_rspec
+  add_guard
   add_critics
   add_sidekiq
   add_whenever
-
+  
   # Migrate
   rails_command "db:create"
   rails_command "db:migrate"
-
+  
   # Commit everything to git
   git :init
   git add: "."
   git commit: %Q{ -m 'Initial commit' }
-
+  
   say
   say "API successfully created using #{PROJECT_NAME}!", :blue
   say
