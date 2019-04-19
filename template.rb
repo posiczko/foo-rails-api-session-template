@@ -34,8 +34,8 @@ end
 
 def add_gems
   gem "bcrypt"
+  gem "fast_jsonapi"
   gem "foreman"
-  gem "friendly_id"
   gem "local_time"
   gem "name_of_person"
   gem "rack-cors"
