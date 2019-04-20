@@ -27,10 +27,18 @@ def add_template_repository_to_source_path
   end
 end
 
+def add_cors
+  say "Adding cors"
+  say "CORS is wide open. You may need to configure config/initializers/cors.rb.", :red
+  say "See https://gorails.com/episodes/cross-origin-resource-sharing-with-rails"
+  copy_file "config/initializers/cors.rb", force: true
+end
+
 def add_critics
   say "Adding critics"
   directory "lib", force: :true
-  copy_file ".rubocop"
+  copy_file ".rubocop.yml"
+  copy_file ".gitignore", force: true
 end
 
 def add_gems
@@ -40,18 +48,20 @@ def add_gems
   gem "local_time"
   gem "name_of_person"
   gem "rack-cors"
+  gem "rack-attack"
   gem "sidekiq"
   gem "whenever", require: false
   
   gem_group :development do
-    gem "term-ansicolor"
+    gem "annotate"
     gem "flog"
     gem "flay"
     gem "guard-bundler"
     gem "guard-rspec", require: false
-    # gem "guard-spring"
+    gem "guard-spring"
     gem "rails_best_practices"
     gem "reek"
+    gem "term-ansicolor"
   end
   
   gem_group :development, :test do
@@ -96,7 +106,6 @@ def add_users
 end
 
 def add_whenever
-  # TODO: Add whenever
   say "Adding whenever."
   run "wheneverize ."
 end
@@ -113,6 +122,11 @@ def check_rails_version
     gem install rails --pre
   OOPS
   exit 1
+end
+
+def copy_templates
+  directory "app", force: true
+  directory "db", force: true
 end
 
 def prettify_gemfile
@@ -145,8 +159,10 @@ after_bundle do
   add_rspec
   add_guard
   add_critics
+  add_cors
   add_sidekiq
   add_whenever
+  copy_templates
   
   # Migrate
   rails_command "db:create"
