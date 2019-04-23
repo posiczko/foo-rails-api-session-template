@@ -19,6 +19,10 @@ every day development.
 * Cronjob management via [whenever](https://github.com/javan/whenever).
 * JSON API using [fast_jsonapi](https://github.com/Netflix/fast_jsonapi).
 * Guard for RSpec.
+* [rack-cors](https://github.com/cyu/rack-cors) gem for handling CORS. Note: Should to be adjusted as it's wide open. 
+  See initializer for configuration.
+* [rack-attack](https://github.com/kickstarter/rack-attack) gem for handling throttling. See initializer for 
+  configuration.
 
 ## Getting Started
 
