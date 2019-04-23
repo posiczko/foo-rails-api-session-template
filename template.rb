@@ -37,7 +37,7 @@ end
 def add_critics
   say "> Adding critics", :blue
   directory "lib", force: :true
-  copy_file ".rubocop.yml"
+  copy_file ".rubocop.yml", force: :true
   copy_file ".gitignore", force: true
 end
 
@@ -56,6 +56,7 @@ def add_gems
 
   gem_group :development do
     gem "annotate"
+    gem "brakeman"
     gem "flog"
     gem "flay"
     gem "guard-bundler"
@@ -88,12 +89,12 @@ end
 
 def add_guard
   say "> Adding Guard", :blue
-  copy_file "Guardfile"
+  copy_file "Guardfile", force: :true
 end
 
 def add_rspec
   say "> Configuring RSpec", :blue
-  copy_file ".rspec"
+  copy_file ".rspec", force: :true
   directory "spec", force: :true
 end
 
@@ -143,11 +144,11 @@ end
 def check_rails_version
   return if rails_6?
   $stderr.puts <<-OOPS.strip_heredoc
-  
+
   Oops. We've encountered an error:
 
   This version of rails-api template is meant to be run with Rails 6.
-  
+
   Please install proper version of rails using either
     gem install rails --pre
   OOPS
@@ -159,6 +160,7 @@ def copy_templates
   directory "app", force: true
   directory "db", force: true
   directory "config", force: true
+  copy_file "Procfile", force: :true
 
   insert_into_file "app/models/user.rb", "
 
