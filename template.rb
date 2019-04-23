@@ -116,21 +116,19 @@ def add_users
   in_root do
     migration = Dir.glob("db/migrate/*").max_by {|f| File.mtime(f)}
     gsub_file migration, /:admin/, ":admin, default: false"
-    gsub_file migration, /:username/, ":username, null: false, default:\"\""
+    gsub_file migration, /:username/, ":username, null: false, default: \"\""
     insert_into_file migration, "    add_index :users, :username, unique: true
 ", before: /^  end/
   end
 
-  insert_into_file "app/models/user.rb", "
-
-  has_secure_password
+  insert_into_file "app/models/user.rb", "  has_secure_password
 
   validates :username, presence: true,
                        uniqueness: { case_sensitive: false }
 
   def self.authenticate(username, password)
     user = User.find_by(username: username)
-    user && user.authenticate(password)
+    user&.authenticate(password)
   end
 ", before: /^end/
 

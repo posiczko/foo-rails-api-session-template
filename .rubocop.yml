@@ -224,6 +224,8 @@ Metrics/LineLength:
   Description: 'Limit lines to 80 characters.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#80-character-limits'
   Max: 80
+  Exclude:
+    - spec/**/*
 
 Metrics/MethodLength:
   Description: 'Avoid methods longer than 10 lines of code.'
@@ -565,6 +567,10 @@ Lint/UnneededCopDisableDirective:
 Lint/Void:
   Description: 'Possible use of operator/literal/variable in void context.'
   Enabled: false
+
+Lint/UselessAssignment:
+  Exclude:
+    - spec/**/*
 
 # Performance
 

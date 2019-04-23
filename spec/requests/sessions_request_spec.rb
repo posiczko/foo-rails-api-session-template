@@ -8,14 +8,14 @@ RSpec.describe "Sessions", type: :request do
       valid_credentials = {
         session: {
           username: user.username,
-          password: 'secret'
-        }
+          password: "secret",
+        },
       }
 
       post session_url, params: valid_credentials
       expect(response).to be_successful
       expect(response).to have_http_status(:created)
-      expect(json[:data][:attributes]).to include({ username: user.username })
+      expect(json[:data][:attributes]).to include(username: user.username)
     end
   end
 
@@ -26,15 +26,17 @@ RSpec.describe "Sessions", type: :request do
       invalid_credentials = {
         session: {
           username: user.username,
-          password: 'wrong-password'
-        }
+          password: "wrong-password",
+        },
       }
 
       post session_url, params: invalid_credentials
       expect(response).not_to be_successful
       expect(response).to have_http_status(:unauthorized)
       expect(request.session[:user_id]).to be_nil
-      expect(response).to have_api_error(status: 401, code: "unauthorized", message: "Invalid credentials")
+      expect(response).to have_api_error(status: 401,
+                                         code: "unauthorized",
+                                         message: "Invalid credentials")
     end
   end
 

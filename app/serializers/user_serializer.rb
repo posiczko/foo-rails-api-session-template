@@ -3,11 +3,11 @@ class UserSerializer
 
   attribute :username
 
-  meta do |object, params|
+  meta do |_object, params|
     message = params.has_key?(:message) ? { message: params[:message] } : {}
     {
       code: params[:code],
-      status: params[:status]
+      status: params[:status],
     }.merge(message)
   end
 end

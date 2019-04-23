@@ -7,7 +7,8 @@ RSpec::Matchers.define :have_api_error do |expected_fields|
       if error
         expected_code = expected_fields.fetch(:code)
         expected_message = expected_fields.fetch(:message)
-        error["code"] == expected_code && message_matches(error["message"], expected_message)
+        error["code"] == expected_code && message_matches(error["message"],
+                                                          expected_message)
       else
         false
       end
@@ -18,13 +19,13 @@ RSpec::Matchers.define :have_api_error do |expected_fields|
 
   def extract_error(response, expected_fields)
     parsed_response = JSON.parse(response.body)
-    parsed_response["errors"].detect { |error|
+    parsed_response["errors"].detect do |error|
       error["code"] == expected_fields.fetch(:code)
-    }
+    end
   end
 
   def message_matches(message, expected_message)
-    if expected_message.kind_of?(Regexp)
+    if expected_message.is_a?(Regexp)
       message =~ expected_message
     else
       message == expected_message
@@ -38,9 +39,11 @@ RSpec::Matchers.define :have_api_error do |expected_fields|
     else
       error = extract_error(response, expected_fields)
       if error
-        "Expected message to be '#{expected_fields[:message]}', but was '#{error['message']}'"
+        "Expected message to be '#{expected_fields[:message]}', " <<
+          "but was '#{error['message']}'"
       else
-        "Could not find an error for code #{expected_fields[:code]} from #{response.body}"
+        "Could not find an error for code #{expected_fields[:code]} " <<
+          "from #{response.body}"
       end
     end
   end

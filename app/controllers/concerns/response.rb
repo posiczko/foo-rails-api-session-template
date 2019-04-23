@@ -23,10 +23,11 @@ module Response
     message = message.present? ? { message: message } : {}
     code = status.present? ? { code: http_code, status: string_status } : {}
 
-    params = { params:
-                 code.merge(message)
-    }
+    params = { params: code.merge(message) }
 
-    json_response(serializer_class.constantize.new(object, params).serialized_json, status)
+    json_response(
+      serializer_class.constantize.new(object, params).serialized_json,
+      status,
+    )
   end
 end

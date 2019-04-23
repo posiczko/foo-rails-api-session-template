@@ -1,7 +1,7 @@
 module Authorization
   extend ActiveSupport::Concern
 
-  rescue_from ActionController::InvalidAuthenticityToken do |e|
+  rescue_from ActionController::InvalidAuthenticityToken do |_e|
     render_error_from(message: "Invalid token",
                       code: "unauthorized",
                       status: :unauthorized)
