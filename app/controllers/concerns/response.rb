@@ -6,9 +6,9 @@ module Response
   end
 
   def render_jsonapi_from(serializer_for:,
-    object:,
-    status:,
-    message: nil)
+                          object:,
+                          status:,
+                          message: nil)
 
     http_code = Rack::Utils::SYMBOL_TO_STATUS_CODE.fetch(status)
     string_status = case status
@@ -24,7 +24,7 @@ module Response
     code = status.present? ? { code: http_code, status: string_status } : {}
 
     params = { params:
-      code.merge(message)
+                 code.merge(message)
     }
 
     json_response(serializer_class.constantize.new(object, params).serialized_json, status)

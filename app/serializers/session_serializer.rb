@@ -3,7 +3,7 @@ class SessionSerializer
 
   attribute :username
   meta do |object, params|
-    message = params.has_key?(:message) ? {message: params[:message]} : {}
+    message = params.has_key?(:message) ? { message: params[:message] } : {}
     {
       code: params[:code],
       status: params[:status]

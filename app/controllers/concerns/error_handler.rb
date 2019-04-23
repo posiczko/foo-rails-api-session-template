@@ -6,12 +6,12 @@ module ErrorHandler
 
     rescue_from ActiveRecord::RecordInvalid do |e|
       render_errors(Api::Errors.from_exception(e),
-        status: :unprocessable_entity)
+                    status: :unprocessable_entity)
     end
 
     rescue_from StandardError do |e|
       render_errors(Api::Errors.from_exception(e),
-        status: :internal_server_error)
+                    status: :internal_server_error)
     end
   end
 

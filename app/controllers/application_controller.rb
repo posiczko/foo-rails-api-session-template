@@ -17,8 +17,8 @@ class ApplicationController < ActionController::API
   def authenticate_user
     unless current_user
       render_error_from(message: "Invalid credentials",
-        code: "unauthorized",
-        status: :unauthorized)
+                        code: "unauthorized",
+                        status: :unauthorized)
     end
   end
 end

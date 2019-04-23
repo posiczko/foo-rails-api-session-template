@@ -117,10 +117,12 @@ def add_users
     migration = Dir.glob("db/migrate/*").max_by {|f| File.mtime(f)}
     gsub_file migration, /:admin/, ":admin, default: false"
     gsub_file migration, /:username/, ":username, null: false, default:\"\""
-    insert_into_file migration, "    add_index :users, :username, unique: true", before: /^  end/
+    insert_into_file migration, "    add_index :users, :username, unique: true
+", before: /^  end/
   end
 
   insert_into_file "app/models/user.rb", "
+
   has_secure_password
 
   validates :username, presence: true,

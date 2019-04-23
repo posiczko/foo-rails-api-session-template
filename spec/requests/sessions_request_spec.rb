@@ -15,7 +15,7 @@ RSpec.describe "Sessions", type: :request do
       post session_url, params: valid_credentials
       expect(response).to be_successful
       expect(response).to have_http_status(:created)
-      expect(json[:data][:attributes]).to include({username: user.username})
+      expect(json[:data][:attributes]).to include({ username: user.username })
     end
   end
 

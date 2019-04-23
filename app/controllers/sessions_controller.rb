@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   def create
     if @user = User.authenticate(session_params[:username],
-      session_params[:password])
+                                 session_params[:password])
       session[:user_id] = @user.id
       render_jsonapi_from(serializer_for: :session, object: @user, status: :created)
     else

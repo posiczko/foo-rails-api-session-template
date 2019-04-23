@@ -3,8 +3,8 @@ module Authorization
 
   rescue_from ActionController::InvalidAuthenticityToken do |e|
     render_error_from(message: "Invalid token",
-      code: "unauthorized",
-      status: :unauthorized)
+                      code: "unauthorized",
+                      status: :unauthorized)
   end
 
   # @return [User]

@@ -9,7 +9,7 @@ class UsersController < ApplicationController
       # render status: :created
       render_jsonapi_from(serializer_for: :user, object: @user, status: :created)
     else
-      render json: {errors: @user.errors}, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 

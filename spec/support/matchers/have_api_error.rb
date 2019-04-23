@@ -5,7 +5,7 @@ RSpec::Matchers.define :have_api_error do |expected_fields|
     if response.response_code == (expected_fields[:status] || 422)
       error = extract_error(response, expected_fields)
       if error
-        expected_code    = expected_fields.fetch(:code)
+        expected_code = expected_fields.fetch(:code)
         expected_message = expected_fields.fetch(:message)
         error["code"] == expected_code && message_matches(error["message"], expected_message)
       else
@@ -18,7 +18,7 @@ RSpec::Matchers.define :have_api_error do |expected_fields|
 
   def extract_error(response, expected_fields)
     parsed_response = JSON.parse(response.body)
-    parsed_response["errors"].detect {|error|
+    parsed_response["errors"].detect { |error|
       error["code"] == expected_fields.fetch(:code)
     }
   end
