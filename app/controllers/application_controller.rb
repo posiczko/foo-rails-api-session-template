@@ -1,18 +1,24 @@
-class ApplicationController < ApiController
+class ApplicationController < ActionController::API
   include ActionController::MimeResponds
   include ActionController::Cookies
   include ActionController::RequestForgeryProtection
-  include Concerns::ErrorHandler
-  include Concerns::Response
+  include Response
+  include ErrorHandler
+  include Authorization
 
   before_action :set_csrf_cookie
 
-  # @return [User]
-  def current_user
-    @current_user ||= User.find(session[:user_id]) if session[:user_id]
-  end
+  private
 
   def set_csrf_cookie
     cookies["CSRF-TOKEN"] = form_authenticity_token
+  end
+
+  def authenticate_user
+    unless current_user
+      render_error_from(message: "Invalid credentials",
+        code: "unauthorized",
+        status: :unauthorized)
+    end
   end
 end

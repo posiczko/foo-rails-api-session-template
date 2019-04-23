@@ -18,7 +18,7 @@ def add_template_repository_to_source_path
       PROJECT_REPO,
       tempdir
     ].map(&:shellescape).join(" ")
-    
+
     if (branch = __FILE__[%r{jumpstart/(.+)/template.rb}, 1])
       Dir.chdir(tempdir) {git checkout: branch}
     end
@@ -28,20 +28,22 @@ def add_template_repository_to_source_path
 end
 
 def add_cors
-  say "Adding cors"
-  say "CORS is wide open. You may need to configure config/initializers/cors.rb.", :red
-  say "See https://gorails.com/episodes/cross-origin-resource-sharing-with-rails"
+  say "> Adding cors", :blue
+  say "> CORS is wide open. You may need to configure config/initializers/cors.rb.", :red
+  say "> See https://gorails.com/episodes/cross-origin-resource-sharing-with-rails", :red
   copy_file "config/initializers/cors.rb", force: true
 end
 
 def add_critics
-  say "Adding critics"
+  say "> Adding critics", :blue
   directory "lib", force: :true
   copy_file ".rubocop.yml"
   copy_file ".gitignore", force: true
 end
 
 def add_gems
+  say "> Adding gems", :blue
+
   gem "bcrypt"
   gem "fast_jsonapi"
   gem "foreman"
@@ -51,7 +53,7 @@ def add_gems
   gem "rack-attack"
   gem "sidekiq"
   gem "whenever", require: false
-  
+
   gem_group :development do
     gem "annotate"
     gem "flog"
@@ -63,7 +65,7 @@ def add_gems
     gem "reek"
     gem "term-ansicolor"
   end
-  
+
   gem_group :development, :test do
     gem "byebug", platforms: %i[mri mingw x64_mingw]
     gem "factory_bot_rails"
@@ -72,7 +74,7 @@ def add_gems
     gem "rubocop", require: false
     gem "rubocop-rspec"
   end
-  
+
   gem_group :test do
     gem "database_cleaner"
     gem "rspec-rails"
@@ -85,28 +87,56 @@ def add_gems
 end
 
 def add_guard
-  say "Adding Guard"
+  say "> Adding Guard", :blue
   copy_file "Guardfile"
 end
 
 def add_rspec
-  say "Configuring RSpec"
+  say "> Configuring RSpec", :blue
   copy_file ".rspec"
   directory "spec", force: :true
 end
 
 def add_sidekiq
   # TODO: Add add_sidekiq
-  say "TBD:: add_sidekiq"
+  say "TBD:: add_sidekiq", :magenta
 end
 
 def add_users
-  # TODO: Add add_users
-  say "TBD:: Adding users."
+  say "> Adding users.", :blue
+  generate :model, "User",
+    "username",
+    "first_name",
+    "last_name",
+    "password_digest",
+    "admin:boolean"
+
+  # Set admin default to false
+  in_root do
+    migration = Dir.glob("db/migrate/*").max_by {|f| File.mtime(f)}
+    gsub_file migration, /:admin/, ":admin, default: false"
+    gsub_file migration, /:username/, ":username, null: false, default:\"\""
+    insert_into_file migration, "    add_index :users, :username, unique: true", before: /^  end/
+  end
+
+  insert_into_file "app/models/user.rb", "
+  has_secure_password
+
+  validates :username, presence: true,
+                       uniqueness: { case_sensitive: false }
+
+  def self.authenticate(username, password)
+    user = User.find_by(username: username)
+    user && user.authenticate(password)
+  end
+", before: /^end/
+
+  # tests and factories are copied in add_rspec
+  # controllers for session and user are copied in copy_templates
 end
 
 def add_whenever
-  say "Adding whenever."
+  say "> Adding whenever.", :blue
   run "wheneverize ."
 end
 
@@ -125,13 +155,21 @@ def check_rails_version
 end
 
 def copy_templates
+  say "> Copying templates", :blue
   directory "app", force: true
   directory "db", force: true
+  directory "config", force: true
+
+  insert_into_file "app/models/user.rb", "
+
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+", after: /config.api_only = true/
 end
 
 def prettify_gemfile
   # TODO: Add prettify_gemfile
-  say "TBD: Prettify Gemfile."
+  say "TBD: Prettify Gemfile.", :magenta
 end
 
 def rails_version
@@ -162,17 +200,23 @@ after_bundle do
   add_cors
   add_sidekiq
   add_whenever
+  add_users
   copy_templates
-  
+
+
   # Migrate
   rails_command "db:create"
+  rails_command "db:create", env: :test
+  rails_command "g annotate:install"
   rails_command "db:migrate"
-  
+  rails_command "db:migrate", env: :test
+  rails_command "db:seed"
+
   # Commit everything to git
   git :init
   git add: "."
   git commit: %Q{ -m 'Initial commit' }
-  
+
   say
   say "API successfully created using #{PROJECT_NAME}!", :blue
   say
